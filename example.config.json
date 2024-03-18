@@ -1,0 +1,18 @@
+{
+    "appName": "app name",
+  
+    "web": {
+      "port": 8080
+    },
+    "log": {
+      "level":6
+    },
+    "db": {
+      "host": "localhost",
+      "username": "postgres",
+      "password": "",
+      "name": "my_gram",
+      "port": "5432"
+    }
+  }
+  
