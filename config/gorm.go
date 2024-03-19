@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/fazriegi/my-gram/model"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -33,5 +34,13 @@ func NewDatabase(viper *viper.Viper) *gorm.DB {
 		log.Fatalf("failed to connect database: %v", err)
 	}
 
+	autoMigrate(db)
+
 	return db
+}
+
+func autoMigrate(db *gorm.DB) {
+	db.AutoMigrate(
+		model.User{},
+	)
 }
