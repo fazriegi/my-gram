@@ -28,3 +28,16 @@ type UserLoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 }
+
+type UserUpdateRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Username string `json:"username" validate:"required"`
+}
+
+type UserUpdateResponse struct {
+	ID        int       `json:"id"`
+	Email     string    `json:"email"`
+	Username  string    `json:"username"`
+	Age       uint8     `json:"age"`
+	UpdatedAt time.Time `json:"updated_at"`
+}

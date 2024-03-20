@@ -30,4 +30,6 @@ func (c *RouteConfig) SetupUserRoutes() {
 
 	users.POST("/register", middleware.ValidateField[model.User](), userController.Create)
 	users.POST("/login", middleware.ValidateField[model.UserLoginRequest](), userController.Login)
+	users.PUT("/:id", middleware.ValidateField[model.UserUpdateRequest](), middleware.Authentication(), userController.Update)
+	users.DELETE("/:id", middleware.Authentication(), userController.Delete)
 }

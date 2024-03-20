@@ -86,3 +86,33 @@ func (u *UserUsecase) Login(props *model.UserLoginRequest) (string, error) {
 
 	return token, nil
 }
+
+func (u *UserUsecase) Update(id int, props model.UserUpdateRequest) (*model.UserUpdateResponse, error) {
+	user, err := u.repository.Update(id, &props)
+
+	if err != nil {
+		u.log.Errorf("error updating user: %s", err.Error())
+		return nil, errors.New("unexpected error occured")
+	}
+
+	userResponse := model.UserUpdateResponse{
+		ID:        user.ID,
+		Email:     user.Email,
+		Username:  user.Username,
+		Age:       user.Age,
+		UpdatedAt: user.UpdatedAt,
+	}
+
+	return &userResponse, nil
+}
+
+func (u *UserUsecase) Delete(id int) error {
+	err := u.repository.Delete(id)
+
+	if err != nil {
+		u.log.Errorf("errpr deleting user account: %s", err.Error())
+		return errors.New("unexpected error occured")
+	}
+
+	return nil
+}

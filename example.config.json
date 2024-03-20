@@ -13,6 +13,7 @@
       "password": "",
       "name": "my_gram",
       "port": "5432"
-    }
+    },
+    "secret" : "my_gram"
   }
   

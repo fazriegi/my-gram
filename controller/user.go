@@ -2,8 +2,10 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/fazriegi/my-gram/model"
 	"github.com/fazriegi/my-gram/usecase"
 	"github.com/gin-gonic/gin"
@@ -81,5 +83,66 @@ func (c *UserController) Login(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "success login",
 		"token":   token,
+	})
+}
+
+func (c *UserController) Update(ctx *gin.Context) {
+	var user model.UserUpdateRequest
+	userData := ctx.MustGet("userData").(jwt.MapClaims)
+	userId := int(userData["id"].(float64))
+	id, _ := strconv.Atoi(ctx.Param("id"))
+
+	if userId != id {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "unauthorized",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBindBodyWith(&user, binding.JSON); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "error parsing request body",
+		})
+		return
+	}
+
+	data, err := c.UseCase.Update(userId, user)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "success update user",
+		"data":    data,
+	})
+}
+
+func (c *UserController) Delete(ctx *gin.Context) {
+	userData := ctx.MustGet("userData").(jwt.MapClaims)
+	userId := int(userData["id"].(float64))
+	id, _ := strconv.Atoi(ctx.Param("id"))
+
+	if userId != id {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "unauthorized",
+		})
+		return
+	}
+
+	err := c.UseCase.Delete(userId)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "your account has been successfully deleted",
 	})
 }
