@@ -110,7 +110,7 @@ func (u *UserUsecase) Delete(id int) error {
 	err := u.repository.Delete(id)
 
 	if err != nil {
-		u.log.Errorf("errpr deleting user account: %s", err.Error())
+		u.log.Errorf("error deleting user account: %s", err.Error())
 		return errors.New("unexpected error occured")
 	}
 
