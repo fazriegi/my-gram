@@ -56,7 +56,7 @@ func (r *PhotoRepository) Update(props *model.Photo) error {
 func (r *PhotoRepository) Delete(id int) error {
 	tx := r.db.Begin()
 
-	if err := tx.Delete(&model.User{}, id).Error; err != nil {
+	if err := tx.Delete(&model.Photo{}, id).Error; err != nil {
 		tx.Rollback()
 		return err
 	}

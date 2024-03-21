@@ -73,7 +73,7 @@ func (u *PhotoUsecase) Update(props *model.Photo) (*model.UpdatePhotoResponse, e
 	err := u.repository.Update(props)
 
 	if err != nil {
-		u.log.Errorf("error updating user: %s", err.Error())
+		u.log.Errorf("error updating photo: %s", err.Error())
 		return nil, errors.New("unexpected error occured")
 	}
 
