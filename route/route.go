@@ -19,6 +19,7 @@ type RouteConfig struct {
 
 func (c *RouteConfig) NewRoute() {
 	c.SetupUserRoutes()
+	c.SetupPhotoRoutes()
 }
 
 func (c *RouteConfig) SetupUserRoutes() {
@@ -32,4 +33,18 @@ func (c *RouteConfig) SetupUserRoutes() {
 	users.POST("/login", middleware.ValidateField[model.UserLoginRequest](), userController.Login)
 	users.PUT("/:id", middleware.ValidateField[model.UserUpdateRequest](), middleware.Authentication(), userController.Update)
 	users.DELETE("/:id", middleware.Authentication(), userController.Delete)
+}
+
+func (c *RouteConfig) SetupPhotoRoutes() {
+	photoRepository := repository.NewPhotoRepository(c.DB)
+	photoUsecase := usecase.NewPhotoUsecase(photoRepository, c.Logger)
+	photoController := controller.NewPhotoController(photoUsecase, c.Logger)
+
+	photos := c.App.Group("/photos")
+	photos.Use(middleware.Authentication())
+	photos.POST("/", middleware.ValidateField[model.PhotoRequest](), photoController.Create)
+	photos.GET("/", photoController.GetAllByUserId)
+	photos.PUT("/:photoId", middleware.PhotoAuthorization(),
+		middleware.ValidateField[model.PhotoRequest](), photoController.Update)
+	photos.DELETE("/:photoId", middleware.PhotoAuthorization(), photoController.Delete)
 }

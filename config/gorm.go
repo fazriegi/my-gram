@@ -11,7 +11,11 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+var db *gorm.DB
+
 func NewDatabase(viper *viper.Viper) *gorm.DB {
+	var err error
+
 	host := viper.GetString("db.host")
 	username := viper.GetString("db.username")
 	password := viper.GetString("db.password")
@@ -26,7 +30,7 @@ func NewDatabase(viper *viper.Viper) *gorm.DB {
 		name,
 		port,
 	)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 
@@ -42,5 +46,10 @@ func NewDatabase(viper *viper.Viper) *gorm.DB {
 func autoMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		model.User{},
+		model.Photo{},
 	)
+}
+
+func GetDB() *gorm.DB {
+	return db
 }

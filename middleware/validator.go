@@ -10,7 +10,10 @@ import (
 )
 
 type inputData interface {
-	model.User | model.UserLoginRequest | model.UserUpdateRequest
+	model.User |
+		model.UserLoginRequest |
+		model.UserUpdateRequest |
+		model.PhotoRequest
 }
 
 type ValidationErrResponse struct {
