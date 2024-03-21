@@ -20,6 +20,7 @@ type RouteConfig struct {
 func (c *RouteConfig) NewRoute() {
 	c.SetupUserRoutes()
 	c.SetupPhotoRoutes()
+	c.SetupCommentRoutes()
 }
 
 func (c *RouteConfig) SetupUserRoutes() {
@@ -47,4 +48,18 @@ func (c *RouteConfig) SetupPhotoRoutes() {
 	photos.PUT("/:photoId", middleware.PhotoAuthorization(),
 		middleware.ValidateField[model.PhotoRequest](), photoController.Update)
 	photos.DELETE("/:photoId", middleware.PhotoAuthorization(), photoController.Delete)
+}
+
+func (c *RouteConfig) SetupCommentRoutes() {
+	commentRepository := repository.NewCommentRepository(c.DB)
+	commentUsecase := usecase.NewCommentUsecase(commentRepository, c.Logger)
+	commentController := controller.NewCommentController(commentUsecase, c.Logger)
+
+	comments := c.App.Group("/comments")
+	comments.Use(middleware.Authentication())
+	comments.POST("/", middleware.ValidateField[model.CreateCommentRequest](), commentController.Create)
+	comments.GET("/", commentController.GetAllByUserId)
+	comments.PUT("/:commentId", middleware.ValidateField[model.UpdateCommentRequest](),
+		middleware.CommentAuthorization(), commentController.Update)
+	comments.DELETE("/:commentId", middleware.CommentAuthorization(), commentController.Delete)
 }

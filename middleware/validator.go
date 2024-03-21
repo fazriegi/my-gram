@@ -13,7 +13,9 @@ type inputData interface {
 	model.User |
 		model.UserLoginRequest |
 		model.UserUpdateRequest |
-		model.PhotoRequest
+		model.PhotoRequest |
+		model.CreateCommentRequest |
+		model.UpdateCommentRequest
 }
 
 type ValidationErrResponse struct {

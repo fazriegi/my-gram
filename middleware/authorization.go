@@ -38,3 +38,32 @@ func PhotoAuthorization() gin.HandlerFunc {
 		ctx.Next()
 	}
 }
+
+func CommentAuthorization() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		db := config.GetDB()
+
+		commentId, _ := strconv.Atoi(ctx.Param("commentId"))
+		userData := ctx.MustGet("userData").(jwt.MapClaims)
+		userId := int(userData["id"].(float64))
+		comment := model.Comment{}
+
+		err := db.Select("user_id").First(&comment, commentId).Error
+
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"message": "data not found",
+			})
+			return
+		}
+
+		if comment.UserId != userId {
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"message": "unauthorized",
+			})
+			return
+		}
+
+		ctx.Next()
+	}
+}
