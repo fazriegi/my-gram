@@ -21,6 +21,7 @@ func (c *RouteConfig) NewRoute() {
 	c.SetupUserRoutes()
 	c.SetupPhotoRoutes()
 	c.SetupCommentRoutes()
+	c.SetupSocialMediaRoutes()
 }
 
 func (c *RouteConfig) SetupUserRoutes() {
@@ -62,4 +63,20 @@ func (c *RouteConfig) SetupCommentRoutes() {
 	comments.PUT("/:commentId", middleware.ValidateField[model.UpdateCommentRequest](),
 		middleware.CommentAuthorization(), commentController.Update)
 	comments.DELETE("/:commentId", middleware.CommentAuthorization(), commentController.Delete)
+}
+
+func (c *RouteConfig) SetupSocialMediaRoutes() {
+	socialMediaRepository := repository.NewSocialMediaRepository(c.DB)
+	socialMediaUsecase := usecase.NewSocialMediaUsecase(socialMediaRepository, c.Logger)
+	socialMediaController := controller.NewSocialMediaController(socialMediaUsecase, c.Logger)
+
+	socialMedias := c.App.Group("/socialmedias")
+	socialMedias.Use(middleware.Authentication())
+	socialMedias.POST("/", middleware.ValidateField[model.SocialMediaRequest](),
+		socialMediaController.Create)
+	socialMedias.GET("/", socialMediaController.GetAll)
+	socialMedias.PUT("/:socialMediaId", middleware.SocialMediaAuthorization(),
+		middleware.ValidateField[model.SocialMediaRequest](), socialMediaController.Update)
+	socialMedias.DELETE("/:socialMediaId", middleware.SocialMediaAuthorization(),
+		socialMediaController.Delete)
 }

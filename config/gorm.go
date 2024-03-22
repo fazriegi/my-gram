@@ -48,6 +48,7 @@ func autoMigrate(db *gorm.DB) {
 		model.User{},
 		model.Photo{},
 		model.Comment{},
+		model.SocialMedia{},
 	)
 }
 
