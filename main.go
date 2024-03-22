@@ -24,7 +24,7 @@ func main() {
 	}
 	routeConfig.NewRoute()
 
-	port := os.Getenv("WEB_PORT")
+	port := os.Getenv("PORT")
 
 	log.Fatal(app.Run(fmt.Sprintf(":%s", port)))
 }
