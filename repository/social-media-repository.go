@@ -10,6 +10,7 @@ type ISocialMediaRepository interface {
 	GetAll() ([]model.SocialMedia, error)
 	Update(props *model.SocialMedia) error
 	Delete(id int) error
+	BulkDeleteByUser(userId int) error
 }
 
 type SocialMediaRepository struct {
@@ -60,4 +61,13 @@ func (r *SocialMediaRepository) Delete(id int) error {
 	}
 
 	return tx.Commit().Error
+}
+
+func (r *SocialMediaRepository) BulkDeleteByUser(userId int) error {
+	if err := r.db.Where("user_id = ?", userId).Delete(&model.SocialMedia{}).Error; err != nil {
+		r.db.Rollback()
+		return err
+	}
+
+	return nil
 }

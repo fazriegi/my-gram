@@ -10,6 +10,7 @@ type IPhotoRepository interface {
 	GetAll() ([]model.Photo, error)
 	Update(props *model.Photo) error
 	Delete(id int) error
+	BulkDeleteByUser(userId int) error
 }
 
 type PhotoRepository struct {
@@ -54,10 +55,34 @@ func (r *PhotoRepository) Update(props *model.Photo) error {
 func (r *PhotoRepository) Delete(id int) error {
 	tx := r.db.Begin()
 
+	if err := BeforeDeletePhoto(tx, id); err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	if err := tx.Delete(&model.Photo{}, id).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
 
 	return tx.Commit().Error
+}
+
+func (r *PhotoRepository) BulkDeleteByUser(userId int) error {
+	if err := r.db.Where("user_id = ?", userId).Delete(&model.Photo{}).Error; err != nil {
+		r.db.Rollback()
+		return err
+	}
+
+	return nil
+}
+
+func BeforeDeletePhoto(tx *gorm.DB, photoId int) error {
+	commentRepository := NewCommentRepository(tx)
+
+	if err := commentRepository.BulkDeleteByPhoto(photoId); err != nil {
+		return err
+	}
+
+	return nil
 }

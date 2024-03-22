@@ -61,10 +61,35 @@ func (r *UserRepository) Update(id int, props *model.UserUpdateRequest) (*model.
 func (r *UserRepository) Delete(id int) error {
 	tx := r.db.Begin()
 
+	if err := BeforeDeleteUser(tx, id); err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	if err := tx.Delete(&model.User{}, id).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
 
 	return tx.Commit().Error
+}
+
+func BeforeDeleteUser(tx *gorm.DB, userId int) error {
+	socialMediaRepository := NewSocialMediaRepository(tx)
+	commentRepository := NewCommentRepository(tx)
+	photoRepository := NewPhotoRepository(tx)
+
+	if err := socialMediaRepository.BulkDeleteByUser(userId); err != nil {
+		return err
+	}
+
+	if err := commentRepository.BulkDeleteByUser(userId); err != nil {
+		return err
+	}
+
+	if err := photoRepository.BulkDeleteByUser(userId); err != nil {
+		return err
+	}
+
+	return nil
 }

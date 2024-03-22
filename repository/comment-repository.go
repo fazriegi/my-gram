@@ -10,6 +10,8 @@ type ICommentRepository interface {
 	GetAll() ([]model.Comment, error)
 	Update(props *model.Comment) error
 	Delete(id int) error
+	BulkDeleteByUser(userId int) error
+	BulkDeleteByPhoto(photoId int) error
 }
 
 type CommentRepository struct {
@@ -64,4 +66,22 @@ func (r *CommentRepository) Delete(id int) error {
 	}
 
 	return tx.Commit().Error
+}
+
+func (r *CommentRepository) BulkDeleteByUser(userId int) error {
+	if err := r.db.Where("user_id = ?", userId).Delete(&model.Comment{}).Error; err != nil {
+		r.db.Rollback()
+		return err
+	}
+
+	return nil
+}
+
+func (r *CommentRepository) BulkDeleteByPhoto(photoId int) error {
+	if err := r.db.Where("photo_id = ?", photoId).Delete(&model.Comment{}).Error; err != nil {
+		r.db.Rollback()
+		return err
+	}
+
+	return nil
 }
