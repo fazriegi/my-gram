@@ -108,7 +108,12 @@ func (c *UserController) Update(ctx *gin.Context) {
 
 	data, err := c.UseCase.Update(userId, user)
 
-	if err != nil {
+	if err != nil && strings.Contains(err.Error(), "already used") {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	} else if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 		})

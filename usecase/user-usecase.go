@@ -88,6 +88,26 @@ func (u *UserUsecase) Login(props *model.UserLoginRequest) (string, error) {
 }
 
 func (u *UserUsecase) Update(id int, props model.UserUpdateRequest) (*model.UserUpdateResponse, error) {
+	existingUser, err := u.repository.FindByEmail(props.Email)
+
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+
+	if existingUser.ID != 0 && existingUser.ID != id {
+		return nil, errors.New("email already used")
+	}
+
+	existingUser, err = u.repository.FindByUsername(props.Username)
+
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+
+	if existingUser.ID != 0 && existingUser.ID != id {
+		return nil, errors.New("username already used")
+	}
+
 	user, err := u.repository.Update(id, &props)
 
 	if err != nil {

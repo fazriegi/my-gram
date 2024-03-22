@@ -8,8 +8,8 @@ import (
 
 type User struct {
 	ID        int    `gorm:"primaryKey" json:"id"`
-	Username  string `gorm:"unique;not null;index:idx_username" json:"username"`
-	Email     string `gorm:"unique;not null;index:idx_email" json:"email" validate:"required,email"`
+	Username  string `gorm:"not null;index:idx_username" json:"username"`
+	Email     string `gorm:"not null;index:idx_email" json:"email" validate:"required,email"`
 	Password  string `json:"password" validate:"required,min=6"`
 	Age       uint8  `json:"age" validate:"gte=8"`
 	CreatedAt time.Time
