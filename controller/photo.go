@@ -51,11 +51,8 @@ func (c *PhotoController) Create(ctx *gin.Context) {
 	})
 }
 
-func (c *PhotoController) GetAllByUserId(ctx *gin.Context) {
-	userData := ctx.MustGet("userData").(jwt.MapClaims)
-	userId := int(userData["id"].(float64))
-
-	data, err := c.UseCase.GetAllByUserId(userId)
+func (c *PhotoController) GetAll(ctx *gin.Context) {
+	data, err := c.UseCase.GetAll()
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -65,7 +62,7 @@ func (c *PhotoController) GetAllByUserId(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"message": "success fetch photo",
+		"message": "success fetch photos",
 		"data":    data,
 	})
 }

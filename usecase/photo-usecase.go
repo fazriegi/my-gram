@@ -35,18 +35,18 @@ func (u *PhotoUsecase) Create(props *model.Photo) (*model.CreatePhotoResponse, e
 	return &data, nil
 }
 
-func (u *PhotoUsecase) GetAllByUserId(userId int) ([]model.GetAllPhotoByUserResponse, error) {
-	data, err := u.repository.GetAllByUserId(userId)
+func (u *PhotoUsecase) GetAll() ([]model.GetAllPhotosResponse, error) {
+	data, err := u.repository.GetAll()
 
 	if err != nil {
-		u.log.Errorf("error fetching photo: %s", err.Error())
+		u.log.Errorf("error fetching photos: %s", err.Error())
 		return nil, errors.New("unexpected error occured")
 	}
 
-	var response []model.GetAllPhotoByUserResponse
+	var response []model.GetAllPhotosResponse
 
-	for _, v := range *data {
-		photoResponse := model.GetAllPhotoByUserResponse{
+	for _, v := range data {
+		photoResponse := model.GetAllPhotosResponse{
 			ID:        v.ID,
 			Title:     v.Title,
 			Caption:   v.Caption,
@@ -69,12 +69,12 @@ func (u *PhotoUsecase) GetAllByUserId(userId int) ([]model.GetAllPhotoByUserResp
 	return response, nil
 }
 
-func (u *PhotoUsecase) Update(props *model.Photo) (*model.UpdatePhotoResponse, error) {
+func (u *PhotoUsecase) Update(props *model.Photo) (model.UpdatePhotoResponse, error) {
 	err := u.repository.Update(props)
 
 	if err != nil {
 		u.log.Errorf("error updating photo: %s", err.Error())
-		return nil, errors.New("unexpected error occured")
+		return model.UpdatePhotoResponse{}, errors.New("unexpected error occured")
 	}
 
 	response := model.UpdatePhotoResponse{
@@ -86,7 +86,7 @@ func (u *PhotoUsecase) Update(props *model.Photo) (*model.UpdatePhotoResponse, e
 		UpdatedAt: props.UpdatedAt,
 	}
 
-	return &response, nil
+	return response, nil
 }
 
 func (u *PhotoUsecase) Delete(id int) error {

@@ -45,7 +45,7 @@ func (c *RouteConfig) SetupPhotoRoutes() {
 	photos := c.App.Group("/photos")
 	photos.Use(middleware.Authentication())
 	photos.POST("/", middleware.ValidateField[model.PhotoRequest](), photoController.Create)
-	photos.GET("/", photoController.GetAllByUserId)
+	photos.GET("/", photoController.GetAll)
 	photos.PUT("/:photoId", middleware.PhotoAuthorization(),
 		middleware.ValidateField[model.PhotoRequest](), photoController.Update)
 	photos.DELETE("/:photoId", middleware.PhotoAuthorization(), photoController.Delete)

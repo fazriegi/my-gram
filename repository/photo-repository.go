@@ -7,7 +7,7 @@ import (
 
 type IPhotoRepository interface {
 	Create(props *model.Photo) error
-	GetAllByUserId(userId int) (*[]model.Photo, error)
+	GetAll() ([]model.Photo, error)
 	Update(props *model.Photo) error
 	Delete(id int) error
 }
@@ -24,21 +24,19 @@ func (r *PhotoRepository) Create(props *model.Photo) error {
 	return r.db.Create(props).Error
 }
 
-func (r *PhotoRepository) GetAllByUserId(userId int) (*[]model.Photo, error) {
+func (r *PhotoRepository) GetAll() ([]model.Photo, error) {
 	var photo []model.Photo
 
-	err := r.db.Table("photos").
-		Joins("JOIN users ON users.id = photos.user_id").
-		Select("photos.*, users.username, users.email").
-		Where("photos.user_id = ?", userId).
+	err := r.db.
 		Preload("User").
-		Find(&photo)
+		Find(&photo).
+		Error
 
-	if err.Error != nil {
-		return nil, err.Error
+	if err != nil {
+		return nil, err
 	}
 
-	return &photo, nil
+	return photo, nil
 }
 
 func (r *PhotoRepository) Update(props *model.Photo) error {
