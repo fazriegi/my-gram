@@ -59,7 +59,7 @@ func (c *RouteConfig) SetupCommentRoutes() {
 	comments := c.App.Group("/comments")
 	comments.Use(middleware.Authentication())
 	comments.POST("/", middleware.ValidateField[model.CreateCommentRequest](), commentController.Create)
-	comments.GET("/", commentController.GetAllByUserId)
+	comments.GET("/", commentController.GetAll)
 	comments.PUT("/:commentId", middleware.ValidateField[model.UpdateCommentRequest](),
 		middleware.CommentAuthorization(), commentController.Update)
 	comments.DELETE("/:commentId", middleware.CommentAuthorization(), commentController.Delete)

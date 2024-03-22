@@ -7,7 +7,7 @@ import (
 
 type ICommentRepository interface {
 	Create(props *model.Comment) error
-	GetAllByUserId(userId int) (*[]model.Comment, error)
+	GetAll() ([]model.Comment, error)
 	Update(props *model.Comment) error
 	Delete(id int) error
 }
@@ -24,22 +24,20 @@ func (r *CommentRepository) Create(props *model.Comment) error {
 	return r.db.Create(props).Error
 }
 
-func (r *CommentRepository) GetAllByUserId(userId int) (*[]model.Comment, error) {
+func (r *CommentRepository) GetAll() ([]model.Comment, error) {
 	var comment []model.Comment
 
 	err := r.db.Table("comments").
-		Joins("JOIN users ON users.id = comments.user_id").
-		Joins("JOIN photos ON photos.id = comments.photo_id").
-		Where("comments.user_id = ?", userId).
 		Preload("User").
 		Preload("Photo").
-		Find(&comment)
+		Find(&comment).
+		Error
 
-	if err.Error != nil {
-		return nil, err.Error
+	if err != nil {
+		return nil, err
 	}
 
-	return &comment, nil
+	return comment, nil
 }
 
 func (r *CommentRepository) Update(props *model.Comment) error {

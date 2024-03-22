@@ -34,18 +34,18 @@ func (u *CommentUsecase) Create(props *model.Comment) (*model.CreateCommentRespo
 	return &data, nil
 }
 
-func (u *CommentUsecase) GetAllByUserId(userId int) ([]model.GetAllCommentByUserResponse, error) {
-	data, err := u.repository.GetAllByUserId(userId)
+func (u *CommentUsecase) GetAll() ([]model.GetAllCommentsResponse, error) {
+	data, err := u.repository.GetAll()
 
 	if err != nil {
-		u.log.Errorf("error fetching comment: %s", err.Error())
+		u.log.Errorf("error fetching comments: %s", err.Error())
 		return nil, errors.New("unexpected error occured")
 	}
 
-	var response []model.GetAllCommentByUserResponse
+	var response []model.GetAllCommentsResponse
 
-	for _, v := range *data {
-		commentResponse := model.GetAllCommentByUserResponse{
+	for _, v := range data {
+		commentResponse := model.GetAllCommentsResponse{
 			ID:        v.ID,
 			Message:   v.Message,
 			PhotoId:   v.PhotoId,
@@ -82,12 +82,12 @@ func (u *CommentUsecase) GetAllByUserId(userId int) ([]model.GetAllCommentByUser
 	return response, nil
 }
 
-func (u *CommentUsecase) Update(props *model.Comment) (*model.UpdateCommentResponse, error) {
+func (u *CommentUsecase) Update(props *model.Comment) (model.UpdateCommentResponse, error) {
 	err := u.repository.Update(props)
 
 	if err != nil {
 		u.log.Errorf("error updating comment: %s", err.Error())
-		return nil, errors.New("unexpected error occured")
+		return model.UpdateCommentResponse{}, errors.New("unexpected error occured")
 	}
 
 	response := model.UpdateCommentResponse{
@@ -98,7 +98,7 @@ func (u *CommentUsecase) Update(props *model.Comment) (*model.UpdateCommentRespo
 		UpdatedAt: props.UpdatedAt,
 	}
 
-	return &response, nil
+	return response, nil
 }
 
 func (u *CommentUsecase) Delete(id int) error {

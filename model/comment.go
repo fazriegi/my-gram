@@ -31,7 +31,7 @@ type CreateCommentResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type GetAllCommentByUserResponse struct {
+type GetAllCommentsResponse struct {
 	ID        int       `json:"id"`
 	Message   string    `json:"message"`
 	PhotoId   int       `json:"photo_id"`

@@ -51,11 +51,8 @@ func (c *CommentController) Create(ctx *gin.Context) {
 	})
 }
 
-func (c *CommentController) GetAllByUserId(ctx *gin.Context) {
-	userData := ctx.MustGet("userData").(jwt.MapClaims)
-	userId := int(userData["id"].(float64))
-
-	data, err := c.UseCase.GetAllByUserId(userId)
+func (c *CommentController) GetAll(ctx *gin.Context) {
+	data, err := c.UseCase.GetAll()
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -72,9 +69,7 @@ func (c *CommentController) GetAllByUserId(ctx *gin.Context) {
 
 func (c *CommentController) Update(ctx *gin.Context) {
 	var reqBody model.UpdateCommentRequest
-	// userData := ctx.MustGet("userData").(jwt.MapClaims)
 	reqBody.ID, _ = strconv.Atoi(ctx.Param("commentId"))
-	// photo.UserId = int(userData["id"].(float64))
 
 	if err := ctx.ShouldBindBodyWith(&reqBody, binding.JSON); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
