@@ -2,14 +2,14 @@ package helper
 
 import (
 	"errors"
+	"os"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 )
 
-var secret = viper.GetString("secret")
+var secret = os.Getenv("SECRET")
 
 func GenerateToken(id int, email string) (string, error) {
 	claims := jwt.MapClaims{

@@ -3,15 +3,18 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/fazriegi/my-gram/config"
 	"github.com/fazriegi/my-gram/route"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	viperConfig := config.NewViper()
-	db := config.NewDatabase(viperConfig)
-	logger := config.NewLogger(viperConfig)
+	godotenv.Load(".env")
+
+	db := config.NewDatabase()
+	logger := config.NewLogger()
 	app := config.NewGin()
 
 	routeConfig := route.RouteConfig{
@@ -21,7 +24,7 @@ func main() {
 	}
 	routeConfig.NewRoute()
 
-	port := viperConfig.GetInt("web.port")
+	port := os.Getenv("WEB_PORT")
 
-	log.Fatal(app.Run(fmt.Sprintf(":%d", port)))
+	log.Fatal(app.Run(fmt.Sprintf(":%s", port)))
 }

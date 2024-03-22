@@ -3,9 +3,9 @@ package config
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/fazriegi/my-gram/model"
-	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -13,17 +13,17 @@ import (
 
 var db *gorm.DB
 
-func NewDatabase(viper *viper.Viper) *gorm.DB {
+func NewDatabase() *gorm.DB {
 	var err error
 
-	host := viper.GetString("db.host")
-	username := viper.GetString("db.username")
-	password := viper.GetString("db.password")
-	name := viper.GetString("db.name")
-	port := viper.GetInt32("db.port")
+	host := os.Getenv("DB_HOST")
+	username := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	name := os.Getenv("DB_NAME")
+	port := os.Getenv("DB_PORT")
 
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Jakarta",
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta",
 		host,
 		username,
 		password,
