@@ -96,10 +96,8 @@ func (c *PhotoController) Update(ctx *gin.Context) {
 }
 
 func (c *PhotoController) Delete(ctx *gin.Context) {
-	userData := ctx.MustGet("userData").(jwt.MapClaims)
-	userId := int(userData["id"].(float64))
-
-	err := c.UseCase.Delete(userId)
+	photoId, _ := strconv.Atoi(ctx.Param("photoId"))
+	err := c.UseCase.Delete(photoId)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{

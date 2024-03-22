@@ -99,10 +99,8 @@ func (c *CommentController) Update(ctx *gin.Context) {
 }
 
 func (c *CommentController) Delete(ctx *gin.Context) {
-	userData := ctx.MustGet("userData").(jwt.MapClaims)
-	userId := int(userData["id"].(float64))
-
-	err := c.UseCase.Delete(userId)
+	commentId, _ := strconv.Atoi(ctx.Param("commentId"))
+	err := c.UseCase.Delete(commentId)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{

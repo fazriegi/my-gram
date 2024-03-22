@@ -96,10 +96,8 @@ func (c *SocialMediaController) Update(ctx *gin.Context) {
 }
 
 func (c *SocialMediaController) Delete(ctx *gin.Context) {
-	userData := ctx.MustGet("userData").(jwt.MapClaims)
-	userId := int(userData["id"].(float64))
-
-	err := c.UseCase.Delete(userId)
+	socialMediaId, _ := strconv.Atoi(ctx.Param("socialMediaId"))
+	err := c.UseCase.Delete(socialMediaId)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
